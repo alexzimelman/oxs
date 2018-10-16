@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {Tenant} = require('../models');
+const Tenant = require('../models/tenant');
 
 
 var t = new Tenant({
@@ -9,9 +9,8 @@ var t = new Tenant({
     debt: false,
     balance: 0
 });
-/*
+
 t.save(function (err){
     if(err) return handleError(err);
     else return console.log("saved");
 });
-*/

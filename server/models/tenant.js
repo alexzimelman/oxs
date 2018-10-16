@@ -26,5 +26,5 @@ var tenantSchema = new Schema({
     }
 });
 
-var Tenant = module.exports = mongoose.model('Tenants', tenantSchema);
+var Tenant = module.exports = mongoose.model('Tenant', tenantSchema);
 

@@ -1,11 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const tenantController = require('../server/controllers/tenantController');
+const app = express();
+const tenantController = require('../controllers/tenantController');
 
 
-app.post('/', tenantController.addTenant, tenantController.removeTenant, tenantController.updateTenant);
+router.get('/tenants/list', tenantController.showAllTenants);
 
-app.get('/', tenantController.findTenant, tenantController.showAllTenants);
+router.post('/tenants/create' , tenantController.addTenant);
+
+router.post('/tenants/update/:id', tenantController.updateTenant);
+
+router.get('/tenants/find/:id', tenantController.findTenant);
+
+router.post('/tenants/delete/:id', tenantController.removeTenant);
+
+router.get('*', function(req, res) {
+    res.end("HI");
+});
 
 module.exports = router;
 

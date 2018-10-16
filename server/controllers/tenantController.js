@@ -1,52 +1,41 @@
 const mongoose = require('mongoose');
-const {Tenant} = require('../models');
+const Tenant = require('../models/tenant');
 
 
 module.exports = {
 
-    async showAllTenants(){
-        try{
-            const tenants = await Tenant.findAll({})
-        }   catch(err){
-            throw new Error('cant load tenants')
-        }
-        return tenants;
+     showAllTenants(req, res){
+        Tenant.find({}, (err, payload) => {
+            res.send(payload);
+        })
     },
 
-    async addTenant(newTenant){
-        try{
-            const tenant = await newTenant.create(req.body);
-        }   catch(err){
-                throw new Error('cant add tenant');
-        }
-        return tenant;
+     addTenant(req, res){
+        let tenant = new Tenant(req.body);
+        tenant.save((err, tenant) => {
+            if(err) throw err;
+            res.send(tenant);
+        })
     },
 
-    async findTenant(query, options){
-        try{
-            let tenant = await Tenant.findOne(query, option);
-            if(tenant) 
-                return tenant;
-            return null;
-
-        }   catch(err){
-                throw new Error('cant find tenant');
-        }
+     findTenant(req , res){
+        Tenant.findById(req.params.id, (err, tenant) => {
+            if(err) throw err;
+            res.send(tenant);
+        })
     },
 
-    async updateTenant(tenantName, newInfo){
-        try{
-            let tenant = await Tenant.findOneAndUpdate({"name": tenantName}, newInfo);
-        }   catch(err){
-                throw new Error('cant update tenante');
-        }
+     updateTenant(req, res){
+        Tenant.findByIdAndUpdate(req.params.id, req.body, (err, tenant) => {
+            if(err) throw err;
+            res.send(req.body);
+        })
     },
 
-    async removeTenant(tenantName){
-        try{
-            let tenant = await Tenant.findOneAndRemove({"name": tenantName});
-        }   catch(error){
-            throw new Error('cant remove tenant')
-        }
+     removeTenant(req, res){
+        Tenant.findByIdAndRemove(req.params.id, (err, tenant) => {
+            if(err) throw err;
+            res.send(tenant);
+        });
     }
 }
