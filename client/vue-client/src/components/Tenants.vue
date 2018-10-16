@@ -6,7 +6,7 @@
   </div>
   <b-table striped hover :items="tenants">
     <template slot="actions" slot-scope="row">
-      <!-- we use @click.stop here to prevent emitting of a 'row-clicked' event  -->
+
       <b-button size="sm" class="mr-2" @click="openEditModal(row)">
        Edit
       </b-button>
@@ -15,9 +15,6 @@
       </b-button>
     </template>
   </b-table>
-    <b-button :variant="'primary'" @click="createModalShow = !createModalShow">
-      Add 
-  </b-button>
   <b-modal ref="modal" hide-footer title="Tenant" v-model="createModalShow">
       <div class="d-block text-center">
         <div class="form-group">
@@ -61,6 +58,15 @@
       </div>
       <b-btn class="mt-3" variant="outline-danger" block @click="updateTenant()">Save</b-btn>
     </b-modal>
+    <b-button :variant="'success'" @click="sort()">
+      Sort 
+  </b-button>
+      <b-button :variant="'primary'" @click="createModalShow = !createModalShow">
+      Add 
+  </b-button>
+      <b-button :variant="'warning'" @click="clear()">
+      Clear filter 
+  </b-button>
   </div>
 </template>
 
@@ -88,7 +94,10 @@ export default {
         this.$axios.get('http://localhost:27017/tenants/list').then((res) => {
           this.tenants = res.data;
           this.tenants.map((item) => {
-            item.actions = 'items';
+            item.actions = 'items'
+            if(item.debt == false){
+              item.balance = 0
+            }
           })
         })
       },
@@ -97,11 +106,21 @@ export default {
           return this.init()
         }
         this.$axios.get(`http://localhost:27017/tenants/find/${this.query}`).then((res) => {
-          this.tenants = res.data;
+          this.tenants = res.data
           this.tenants.map((item) => {
-            item.actions = 'items';
+            item.actions = 'items'
           })
         })
+      },
+      sort(){
+        let _tenants = this.tenants.filter((item) => {
+             return item.debt == true     
+        })
+        this.tenants = _tenants
+      },
+      clear(){
+        this.init()
+        this.query = null
       },
       openEditModal(row){
         let _tenant = {}
