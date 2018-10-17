@@ -4,7 +4,8 @@
   <div class="form-group">
     <input type="text" class="form-control" v-model="query" @change="search()" placeholder="Search By Name">
   </div>
-  <b-table striped hover :items="tenants">
+  
+  <b-table striped hover :items="tenants" :fields="fields">
     <template slot="actions" slot-scope="row">
 
       <b-button size="sm" class="mr-2" @click="openEditModal(row)">
@@ -58,10 +59,13 @@
       </div>
       <b-btn class="mt-3" variant="outline-danger" block @click="updateTenant()">Save</b-btn>
     </b-modal>
-    <b-button :variant="'success'" @click="sort()">
-      Sort 
+    <b-button :variant="'danger'" @click="showInDebt()">
+      In-Debt 
   </b-button>
-      <b-button :variant="'primary'" @click="createModalShow = !createModalShow">
+    <b-button :variant="'success'" @click="showInNoDebt()">
+      Debt-Free 
+  </b-button>
+       <b-button :variant="'primary'" @click="addModal()">
       Add 
   </b-button>
       <b-button :variant="'warning'" @click="clear()">
@@ -76,6 +80,9 @@ export default {
   name: 'Tenants',
   data () {
     return {
+      fields: [
+        'name','phone','adress','debt','balance','actions'
+      ],
       query: null,
       editModalShow: false,
       createModalShow: false,
@@ -85,7 +92,7 @@ export default {
         phone: null,
         adress: null,
         debt: false,
-        balance: 0
+        balance: 0,
       }
     }
     },
@@ -101,6 +108,18 @@ export default {
           })
         })
       },
+      addModal(){
+        this.tenant.name = null
+        this.tenant.phone = null
+        this.tenant.adress = null
+        this.tenant.debt = false
+        this.tenant.balance = 0
+        if(this.tenant._id){
+          delete this.tenant._id
+        }
+        //this.tenant._id = null
+        this.createModalShow = !this.createModalShow
+      },
       search(){
         if(!this.query) {
           return this.init()
@@ -112,7 +131,13 @@ export default {
           })
         })
       },
-      sort(){
+      showInNoDebt(){
+        let _tenants = this.tenants.filter((item) => {
+           return item.debt == false     
+        })
+        this.tenants = _tenants
+      },
+      showInDebt(){
         let _tenants = this.tenants.filter((item) => {
              return item.debt == true     
         })
@@ -131,14 +156,14 @@ export default {
       createTenant(){
         let payload = this.tenant
         this.$axios.post(`http://localhost:27017/tenants/create`, payload).then((res) => {
-           this.createModalShow = false
+           this.createModalShow = !this.createModalShow
            this.tenants.push(res.data)
         })
       },
       updateTenant(){
         let payload = this.tenant
         this.$axios.post(`http://localhost:27017/tenants/update/${payload._id}`, payload).then((res) => {
-           this.editModalShow = false
+           this.editModalShow = !this.editModalShow
            this.init()
         })
       },

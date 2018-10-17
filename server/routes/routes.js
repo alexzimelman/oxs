@@ -10,7 +10,7 @@ router.post('/tenants/create' , tenantController.addTenant);
 
 router.post('/tenants/update/:id', tenantController.updateTenant);
 
-router.get('/tenants/find/:id', tenantController.findTenant);
+router.get('/tenants/find/:name', tenantController.findTenant);
 
 router.post('/tenants/delete/:id', tenantController.removeTenant);
 

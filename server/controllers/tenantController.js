@@ -19,7 +19,7 @@ module.exports = {
     },
 
      findTenant(req , res){
-        Tenant.findById(req.params.id, (err, tenant) => {
+        Tenant.find({name: req.params.name}, (err, tenant) => {
             if(err) throw err;
             res.send(tenant);
         })
